@@ -40,29 +40,43 @@ linearSepData <- function(n=100) {
   
 }
 
-update_preds <- function(data, incorrect_preds, w) {
+predict.perc <- function(data, w) {
+  pred <- apply(data[, 2:4], 1, FUN = function(x) sign(sum(x * w)))
+  return(pred)
+}
+
+update_preds <- function(data, incorrect_preds, w, min_tol=0, max_iter=50) {
+  iter <- 1
   repeat{
-    samp <- incorrect_preds[sample(1:nrow(incorrect_preds), 1)]
-    w <- w + samp[, .SD * cls, .SDcols=2:4][1,]
-    preds <- apply(data[, 2:4], 1, FUN = function(x) sign(sum(x * w)))
-    incorrect_preds <- data[cls != preds]
-    if (nrow(incorrect_preds) == 0) break
+    w <- w + incorrect_preds[sample(1:nrow(incorrect_preds), 1)][, .SD * cls, .SDcols=2:4][1,]
+    pred <- predict.perc(data, w)
+    incorrect_preds <- data[cls != pred]
+    iter <- iter + 1
+    if (nrow(incorrect_preds) == min_tol | iter == max_iter) break
   } 
   return(
     list(
       w = c(unname(unlist(w))),
       slope = -w[[2]] / w[[3]],
-      intercept = -w[[1]] / w[[3]]
+      intercept = -w[[1]] / w[[3]],
+      pred = pred
     )
   )
 }
 
-perceptron <- function(data) {
+perceptron <- function(data, min_tol=0, max_iter=50, take_sample=F, sample_size=.25) {
   w <- runif(3, min=0, max=1)
-  preds <- apply(data[, 2:4], 1, FUN = function(x) sign(sum(x * w)))
+  if (take_sample == T) {
+    cls1 <- data[cls == 1]
+    cls2 <- data[cls == -1]
+    data <- funion(cls1[sample(1:nrow(cls1), size=as.integer(nrow(cls1) * sample_size/2))],
+                   cls2[sample(1:nrow(cls2), size=as.integer(nrow(cls2) * sample_size/2))],
+                   all=T)
+  }
+  preds <- predict.perc(data, w)
   incorrect_preds <- data[cls != preds]
   up <- cmpfun(update_preds)
-  p <- up(data, incorrect_preds, w)
+  p <- up(data, incorrect_preds, w, min_tol=min_tol, max_iter=max_iter)
   
   print(paste0('The calculation has a slope of ', round(p$slope, 3), 
                ' and intercept at ', round(p$intercept, 3)))
@@ -72,7 +86,7 @@ perceptron <- function(data) {
 
 lsData <- linearSepData(n=1000)
 DT <- lsData$data
-perc <- perceptron(DT)
+perc <- perceptron(DT, take_sample=T)
 
 # Plot
 ggplot(data=DT, aes(x=x, y=y, color=as.factor(cls))) + 
