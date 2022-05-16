@@ -50,25 +50,20 @@ following mathematical principles must first be understood:
 
 I am going to assume that majority of people reading this article have prior 
 knowledge of each of these fundamentals. If you do not, a great resource can be
-found [here](https://www.khanacademy.org/math/precalculus/x9e81a4f98389efdf:vectors). But I will also give a brief refresher to provide some context.
+found [here](https://www.khanacademy.org/math/precalculus/x9e81a4f98389efdf:vectors). I am not going to attempt to
+teach the fundamentals, because there are already so many (better) resources 
+available.
 
-### Vectors
+## Linearly Separable Data
+As mentioned preciously, one of the challenges with the single-layer perceptrons
+is that the constraints limit the algorithm's ability to accurately classify
+data. Specifically, the primary constraint is that the data *must* be linearly
+separable. 
 
-```{r}
-
-```
-
-### The Dot Product
-
-```{r}
-
-```
-
-### Linear Separable Data
-The definition of linearly separable data is pretty self-explanatory. At a high
-level, for data to be linearly separable it simply means that there exists some
-plane that can literally "separate" the data. For example, consider the
-following dataset of two classes:
+The definition of linearly separable data is pretty self-explanatory.
+At a high level, for data to be linearly separable it simply means that there 
+exists some plane that can literally "separate" the data. For example, consider 
+the following dataset of two classes:
 
 ```{r}
 
@@ -127,7 +122,7 @@ plot_ly(data=DT,
 
 ```
 
-In this instance, a line would be insufficient when attempting to seperate the 
+In this instance, a line would be insufficient when attempting to separate the 
 two data classes. Instead, a two-dimensional plane can be used:
 
 ```{r}
@@ -161,8 +156,9 @@ one-dimensional. In the second example, the data is three-dimensional and the
 separation is two.
 
 ## Perceptron Algorithm
-Now that we have reviewed the basic components that are used to construct the 
-perceptron algorithm, we can get into how the algorithm works.
+Now assuming you have some basic knowledge of vectors and we have reviewed the 
+the meaning of linear separability and hyperplanes, we can build on this 
+knowledge to understand how the Perceptron algorithm works.
 
 ### Weights
 
