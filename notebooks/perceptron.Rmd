@@ -1,5 +1,5 @@
 ---
-title: "Write your own Perceptron Algorithm"
+title: "The Perceptron Algorithm"
 output:
   html_document:
     df_print: paged
@@ -151,7 +151,7 @@ to describe this linear separation is used: a *hyperplane*.
 According to the [Wikipedia definition](https://en.wikipedia.org/wiki/Hyperplane): 
 "In geometry, a hyperplane is a subspace whose dimension is one less than 
 that of its ambient space." This makes sense. Looking at our first example, the
-deminsionality of the data is two, and the line drawn to separate the data is
+dimensionality of the data is two, and the line drawn to separate the data is
 one-dimensional. In the second example, the data is three-dimensional and the
 separation is two.
 
@@ -160,7 +160,18 @@ Now assuming you have some basic knowledge of vectors and we have reviewed the
 the meaning of linear separability and hyperplanes, we can build on this 
 knowledge to understand how the Perceptron algorithm works.
 
-### Weights
+To begin, consider the following:
+
+\[ 
+  f(x) = \begin{cases} 
+      1 & \text{if } \vec{x} \cdot \vec{w} + b > 0 \\
+      -1 & \text{otherwise} 
+   \end{cases} \\
+  \text{Where}\ \vec{w} \ \text{ and } \vec{x} \text{ are real-valued vectors (} \vec{w}\text{ represents weights), } 
+  \text{the dot product } \vec{x} \cdot \vec{w} = \sum_{i=1}^k \vec{x}\vec{w} \text{ where } k \text{ is the number of inputs, and } b \text{ is the bias.}
+  \]
+
+### The Random A
 
 ```{r}
 
@@ -201,7 +212,7 @@ ggplot(data=DT, aes(x=x, y=y)) +
 
 ```
 
-### Full Code 
+Here is the full R script, with the prior steps defined as functions:
 
 ```{r}
 #' Predict class of data by taking the sign of the dot product of x & w
@@ -267,7 +278,7 @@ perceptron <- function(data, verbose=F) {
 --------------------------------------------------------------------------------
 In future articles, I intend to share about multi-layer and kernel perceptrons,
 so stay tuned! Also feel free to check out [some of my more recent work](https://medium.com/@bentontripp/calculus-with-python-part-1-3ce54973d6dc), a 5-part
-series (currently still in progress) on solving Calculus problems using **Python**.
+series (currently still in progress) on solving Calculus problems using **Python**!
 
 ## References
 https://en.wikipedia.org/wiki/Perceptron <br>
