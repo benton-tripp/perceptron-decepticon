@@ -1,28 +1,45 @@
 ---
-title: "Perceptron Linear Algebra"
-output: html_notebook
+title: "Write your own Perceptron Algorithm"
+output:
+  html_document:
+    df_print: paged
 ---
 
 ## Introduction
+The Perceptron algorithm is possibly the simplest of binary classification
+algorithms. Originally invented in 1958 by Frank Rosenblatt, it was quickly 
+discovered that the constraints of a single-layer perceptron make the 
+classification method impractical. However, multi-layer perceptrons are still
+used today as the basic building-block of "feed-forward" neural networks. As a 
+result, a keen understanding of this algorithm is critical to any aspiring data
+scientist.
 
+This article is meant to serve as a high-level overview of the mathematics
+behind the algorithm, as well as an example of how one might go
+about programming their own Perceptron algorithm. Although, the code examples
+are written in the **R** language, I have similar functions in **Python** that you
+can find [here]().
 
 ### R Packages
 Before we begin, we can go ahead and import the required R packages. If they are
 not currently installed, that can be done first. The packages used in this 
-project are:
-- [data.table](https://cran.r-project.org/web/packages/data.table/index.html)
-- [ggplot](https://ggplot2.tidyverse.org/)
-- [plotly](https://plotly.com/r/)
+tutorial are: <br>
+- [data.table](https://cran.r-project.org/web/packages/data.table/index.html) <br>
+- [ggplot](https://ggplot2.tidyverse.org/) <br>
+- [plotly](https://plotly.com/r/) <br>
 
 ```{r}
-# Install if needed
+
+# Install packages if needed
+
 if (!require(data.table)) install.packages('data.table')
 if (!require(ggplot2)) install.packages('ggplot2')
-if (!require(ggplot2)) install.packages('ggplot2')
+if (!require(plotly)) install.packages('plotly')
 
 library(data.table)
 library(ggplot2)
 library(plotly)
+
 ```
 
 ## Math Fundamentals of the Perceptron Algorithm
@@ -51,48 +68,63 @@ found [here](https://www.khanacademy.org/math/precalculus/x9e81a4f98389efdf:vect
 The definition of linearly separable data is pretty self-explanatory. At a high
 level, for data to be linearly separable it simply means that there exists some
 plane that can literally "separate" the data. For example, consider the
-following plot:
+following dataset of two classes:
 
 ```{r}
-two_d_sample <- data.table(
+
+DT <- data.table(
+  class_ = c(rep(1, 31), rep(-1, 31)),
   x = c(seq(1, 4, .1), seq(7, 10, .1)),
-  y = c(runif(31, 1, 4), runif(31, 7, 10)),
-  class_ = as.factor(c(rep(1, 31), rep(0, 31)))
+  y = c(runif(31, 1, 4), runif(31, 7, 10))
 )
 
-plt1 <- ggplot(two_d_sample, aes(x=x, y=y, color=class_)) + 
-    geom_point()
+ggplot(DT, aes(x=x, y=y)) + 
+  geom_point(colour=c(rep('blue',31), rep('darkred', 31))) + 
+  theme(legend.position='none',
+        axis.text.x=element_blank(),
+        axis.text.y=element_blank())
 
-plt1
 ```
 
 It is pretty obvious that you can draw some arbitrary line that separates the 
 two different colored data points:
 
 ```{r}
-plt1 + geom_abline(slope=-1.25, intercept=12)
+
+ggplot(DT, aes(x=x, y=y)) + 
+  geom_point(colour=c(rep('blue',31), rep('darkred', 31))) + 
+  geom_abline(slope=-1.25, intercept=12) + 
+  theme(legend.position='none',
+        axis.text.x=element_blank(),
+        axis.text.y=element_blank())
+
 ```
 
 Similarly, consider the following three-dimensional data:
 
 ```{r}
-three_d_sample <- two_d_sample[, z := c(runif(31, 1, 4), runif(31, 7, 10))]
+
+DT <- DT[, z := c(runif(31, 1, 4), runif(31, 7, 10))]
 
 scene = list(
   camera = list(
     center = list(x = 0, y = 0, z = 0), 
     eye = list(x = 1.75, y = .75, z = .25)
-    )
-  )
-plt2 <- plot_ly(data=three_d_sample, 
-                x=~x, y=~y, z=~z, 
-                color=~class_,
-                type='scatter3d',
-                mode='markers', 
-                colors=c('darkred', 'blue')) %>%
+    ),
+  xaxis=list(title='x', showticklabels=F),
+  yaxis=list(title='y', showticklabels=F),
+  zaxis=list(title='z', showticklabels=F)
+)
+
+plot_ly(data=DT,
+        x=~x, y=~y, z=~z, 
+        color=~as.factor(class_),
+        type='scatter3d',
+        mode='markers', 
+        colors=c('darkred', 'blue'),
+        showlegend=F) %>%
   layout(scene=scene)
 
-plt2
 ```
 
 In this instance, a line would be insufficient when attempting to seperate the 
@@ -100,28 +132,25 @@ two data classes. Instead, a two-dimensional plane can be used:
 
 ```{r}
 
-plt3 <- plot_ly(data=three_d_sample, 
-                colors=c('darkred', 'gray', 'blue')) %>%
+plot_ly(data=DT,
+        colors=c('darkred', 'gray', 'blue')) %>%
   add_trace(x=~seq(min(x), max(x), .1)*1.5, 
             y=~seq(min(y), max(y), .1)*1.5, 
             z=~matrix(6, nrow=62, ncol=62),
             type='surface') %>%
   add_trace(x=~x, y=~y, z=~z, 
-                color=~class_,
-                type='scatter3d',
-                mode='markers') %>%
-  layout(scene=append(scene, 
-                      list(xaxis=list(title='x'),
-                           yaxis=list(title='y'),
-                           zaxis=list(title='z')))) %>% 
+            color=~as.factor(class_),
+            type='scatter3d',
+            mode='markers',
+            showlegend=F) %>%
+  layout(scene=scene) %>% 
   hide_colorbar()
 
-plt3
 ```
 
 Of course, this gets a little harder to visualize - or even explain - 
 as dimensionality continues to increase. As a result, a more generalized term
-to describe this linear separation is used: a **hyperplane**.
+to describe this linear separation is used: a *hyperplane*.
 
 ### Hyperplanes
 According to the [Wikipedia definition](https://en.wikipedia.org/wiki/Hyperplane): 
@@ -132,33 +161,121 @@ one-dimensional. In the second example, the data is three-dimensional and the
 separation is two.
 
 ## Perceptron Algorithm
-
-### Generate Data
-
-```{r}
-
-```
+Now that we have reviewed the basic components that are used to construct the 
+perceptron algorithm, we can get into how the algorithm works.
 
 ### Weights
 
 ```{r}
 
+# Remove z since we are focusing on 2D data, add the starting value for w1
+DT[, z := NULL][, w1 := 1]
+
+# Generate random weights
+w <- runif(3, min=0, max=1)
+
+# Predict class (either -1 or 1) at each point
+pred <- apply(DT[, 2:4], 1, FUN = function(x) sign(sum(x * w)))
+
+# Get incorrect predictions
+incorrect_preds <- DT[class_ != pred]
 ```
 
 ### Iterate
 
 ```{r}
 
+# Iteratively update weights
+repeat{
+  w <- w + unname(unlist(
+    incorrect_preds[sample(1:nrow(incorrect_preds), 1)][, .SD * class_, .SDcols=2:4][1,]
+    ))
+  pred <- apply(DT[, 2:4], 1, FUN = function(x) sign(sum(x * w)))
+  incorrect_preds <- DT[class_ != pred]
+    if (nrow(incorrect_preds) == 0) break
+}
+
+# Plot
+ggplot(data=DT, aes(x=x, y=y)) +
+  geom_point(color=c(rep('blue',31), rep('darkred', 31))) +
+  geom_abline(slope=-w[[2]] / w[[1]], intercept=-w[[3]] / w[[1]]) + 
+  theme(legend.position='none',
+        axis.text.x=element_blank(),
+        axis.text.y=element_blank())
+
 ```
 
-
-## Multi-Layer Perceptron
+### Full Code 
 
 ```{r}
+#' Predict class of data by taking the sign of the dot product of x & w
+#' 
+#' @param data linearly separable data.table (cls, w1, x, y)
+#' @param w vector of real-valued weights
+#' 
+#' @return vector of predicted classes
+#' 
+predict.perc <- function(data, w) {
+  pred <- apply(data[, 2:4], 1, FUN = function(x) sign(sum(x * w)))
+  return(pred)
+}
+
+
+#' Iterate over data to generate optimal w vector, slope, intercept, and predicted values
+#' 
+#' @param data linearly separable data.table (cls, w1, x, y)
+#' @param incorrect_preds subset of data containing initial incorrect predictions
+#' @param w starting w vector
+#'
+#' @return list containing w, slope/intercept, and predicted values
+#' 
+update_preds <- function(data, incorrect_preds, w) {
+  repeat{
+    w <- w + incorrect_preds[sample(1:nrow(incorrect_preds), 1)][, .SD * cls, .SDcols=2:4][1,]
+    pred <- predict.perc(data, w)
+    incorrect_preds <- data[cls != pred]
+    if (nrow(incorrect_preds) == 0) break
+  } 
+  return(
+    list(
+      w = c(unname(unlist(w))),
+      slope = -w[[2]] / w[[1]],
+      intercept = -w[[3]] / w[[1]],
+      pred = pred
+    )
+  )
+}
+
+
+#' Generate w vector, slope, intercept, and predicted values
+#' 
+#' @param data linearly separable data.table (class_, x, y, w1)
+#' @param verbose whether to print output line properties
+#'
+#' @return list containing w, slope/intercept, and predicted values
+#' 
+perceptron <- function(data, verbose=F) {
+  w <- runif(3, min=0, max=1)
+  preds <- predict.perc(data, w)
+  incorrect_preds <- data[class_ != pred]
+  p <- update_preds(data, incorrect_preds, w)
+  if (verbose == T) {
+    message(paste0('The calculation has a slope of ', round(p$slope, 3), 
+                   ' and intercept at ', round(p$intercept, 3)))
+  }
+  return(p)
+}
 
 ```
 
+--------------------------------------------------------------------------------
+In future articles, I intend to share about multi-layer and kernel perceptrons,
+so stay tuned! Also feel free to check out [some of my more recent work](https://medium.com/@bentontripp/calculus-with-python-part-1-3ce54973d6dc), a 5-part
+series (currently still in progress) on solving Calculus problems using **Python**.
 
+## References
+https://en.wikipedia.org/wiki/Perceptron <br>
+https://bitbucket.org/syncfusiontech/svm-succinctly/src/master/
 
 
 
