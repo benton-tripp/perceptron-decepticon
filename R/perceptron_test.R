@@ -1,8 +1,8 @@
 require(ggplot2)
 require(data.table)
 require(compiler)
-source('generate_data.R')
-source('perceptron.R')
+source('~/R/generate_data.R')
+source('~/R/perceptron.R')
 
 lsData <- linearSepData(n=100)
 DT <- lsData$data

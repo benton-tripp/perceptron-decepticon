@@ -1,0 +1,166 @@
+---
+title: "Perceptron Linear Algebra"
+output: html_notebook
+---
+
+## Introduction
+
+
+### R Packages
+Before we begin, we can go ahead and import the required R packages. If they are
+not currently installed, that can be done first. The packages used in this 
+project are:
+- [data.table](https://cran.r-project.org/web/packages/data.table/index.html)
+- [ggplot](https://ggplot2.tidyverse.org/)
+- [plotly](https://plotly.com/r/)
+
+```{r}
+# Install if needed
+if (!require(data.table)) install.packages('data.table')
+if (!require(ggplot2)) install.packages('ggplot2')
+if (!require(ggplot2)) install.packages('ggplot2')
+
+library(data.table)
+library(ggplot2)
+library(plotly)
+```
+
+## Math Fundamentals of the Perceptron Algorithm
+In order to understand the Perceptron algorithm, a basic knowledge of the
+following mathematical principles must first be understood:
+- Vectors (specifically, how to calculate the direction and norm)
+- The Dot Product
+
+I am going to assume that majority of people reading this article have prior 
+knowledge of each of these fundamentals. If you do not, a great resource can be
+found [here](https://www.khanacademy.org/math/precalculus/x9e81a4f98389efdf:vectors). I will also give a brief refresher to provide some context.
+
+### Vectors
+
+```{r}
+
+```
+
+### The Dot Product
+
+```{r}
+
+```
+
+### Linear Separable Data
+The definition of linearly separable data is pretty self-explanatory. At a high
+level, for data to be linearly separable it simply means that there exists some
+plane that can literally "separate" the data. For example, consider the
+following plot:
+
+```{r}
+two_d_sample <- data.table(
+  x = c(seq(1, 4, .1), seq(7, 10, .1)),
+  y = c(runif(31, 1, 4), runif(31, 7, 10)),
+  class_ = as.factor(c(rep(1, 31), rep(0, 31)))
+)
+
+plt1 <- ggplot(two_d_sample, aes(x=x, y=y, color=class_)) + 
+    geom_point()
+
+plt1
+```
+
+It is pretty obvious that you can draw some arbitrary line that separates the 
+two different colored data points:
+
+```{r}
+plt1 + geom_abline(slope=-1.25, intercept=12)
+```
+
+Similarly, consider the following three-dimensional data:
+
+```{r}
+three_d_sample <- two_d_sample[, z := c(runif(31, 1, 4), runif(31, 7, 10))]
+
+scene = list(
+  camera = list(
+    center = list(x = 0, y = 0, z = 0), 
+    eye = list(x = 1.75, y = .75, z = .25)
+    )
+  )
+plt2 <- plot_ly(data=three_d_sample, 
+                x=~x, y=~y, z=~z, 
+                color=~class_,
+                type='scatter3d',
+                mode='markers', 
+                colors=c('darkred', 'blue')) %>%
+  layout(scene=scene)
+
+plt2
+```
+
+In this instance, a line would be insufficient when attempting to seperate the 
+two data classes. Instead, a two-dimensional plane can be used:
+
+```{r}
+
+plt3 <- plot_ly(data=three_d_sample, 
+                colors=c('darkred', 'gray', 'blue')) %>%
+  add_trace(x=~seq(min(x), max(x), .1)*1.5, 
+            y=~seq(min(y), max(y), .1)*1.5, 
+            z=~matrix(6, nrow=62, ncol=62),
+            type='surface') %>%
+  add_trace(x=~x, y=~y, z=~z, 
+                color=~class_,
+                type='scatter3d',
+                mode='markers') %>%
+  layout(scene=append(scene, 
+                      list(xaxis=list(title='x'),
+                           yaxis=list(title='y'),
+                           zaxis=list(title='z')))) %>% 
+  hide_colorbar()
+
+plt3
+```
+
+Of course, this gets a little harder to visualize - or even explain - 
+as dimensionality continues to increase. As a result, a more generalized term
+to describe this linear separation is used: a **hyperplane**.
+
+### Hyperplanes
+According to the [Wikipedia definition](https://en.wikipedia.org/wiki/Hyperplane): 
+"In geometry, a hyperplane is a subspace whose dimension is one less than 
+that of its ambient space." This makes sense. Looking at our first example, the
+deminsionality of the data is two, and the line drawn to separate the data is
+one-dimensional. In the second example, the data is three-dimensional and the
+separation is two.
+
+## Perceptron Algorithm
+
+### Generate Data
+
+```{r}
+
+```
+
+### Weights
+
+```{r}
+
+```
+
+### Iterate
+
+```{r}
+
+```
+
+
+## Multi-Layer Perceptron
+
+```{r}
+
+```
+
+
+
+
+
+
+
