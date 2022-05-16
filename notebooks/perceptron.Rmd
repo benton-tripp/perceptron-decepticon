@@ -18,7 +18,7 @@ This article is meant to serve as a high-level overview of the mathematics
 behind the algorithm, as well as an example of how one might go
 about programming their own Perceptron algorithm. Although, the code examples
 are written in the **R** language, I have similar functions in **Python** that you
-can find [here]().
+can find [here](https://github.com/bentontripp/perceptron-decepticon/blob/c61aee9e1a18e8880a6fb2a220f5c4a4971d4f89/notebooks/perceptron.ipynb).
 
 ### R Packages
 Before we begin, we can go ahead and import the required R packages. If they are
@@ -50,7 +50,7 @@ following mathematical principles must first be understood:
 
 I am going to assume that majority of people reading this article have prior 
 knowledge of each of these fundamentals. If you do not, a great resource can be
-found [here](https://www.khanacademy.org/math/precalculus/x9e81a4f98389efdf:vectors). I will also give a brief refresher to provide some context.
+found [here](https://www.khanacademy.org/math/precalculus/x9e81a4f98389efdf:vectors). But I will also give a brief refresher to provide some context.
 
 ### Vectors
 
