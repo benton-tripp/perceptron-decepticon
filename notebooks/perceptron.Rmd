@@ -18,7 +18,7 @@ This article is meant to serve as a high-level overview of the mathematics
 behind the algorithm, as well as an example of how one might go
 about programming their own Perceptron algorithm. Although, the code examples
 are written in the **R** language, I have similar functions in **Python** that you
-can find [here](https://github.com/bentontripp/perceptron-decepticon/blob/c61aee9e1a18e8880a6fb2a220f5c4a4971d4f89/notebooks/perceptron.ipynb).
+can find [here](https://github.com/bentontripp/perceptron-decepticon/blob/3a1e134e6747f5197c5edbc314c780ffb2d01539/notebooks/perceptron.ipynb).
 
 ### R Packages
 Before we begin, we can go ahead and import the required R packages. If they are
