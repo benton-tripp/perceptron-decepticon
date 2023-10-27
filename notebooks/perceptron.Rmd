@@ -1,9 +1,167 @@
 ---
-title: "The Perceptron Algorithm"
+title: "The Perceptron Algorithm (in R and Python)"
+author: "Benton Tripp"
+date: "2022-05-17"
 output:
   html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+    theme: flatly
     df_print: paged
 ---
+
+
+<style>
+.tocify-extend-page {
+  height: 0 !important;
+}
+.post_navi {
+  display: flex
+}
+
+.post_navi-label {
+  font-size: 0.8em;
+  opacity: 0.5
+}
+
+.post_navi .post_navi-item {
+  padding: 0 2.2em;
+  width: 50%;
+  position: relative;
+  color: inherit !important
+}
+
+.post_navi .nav_prev {
+  text-align: left
+}
+
+.post_navi .nav_next {
+  text-align: right
+}
+
+.post_navi .nav_prev .post_navi-arrow {
+  left: 0
+}
+
+.post_navi .nav_next .post_navi-arrow {
+  right: 0
+}
+
+.post_navi .post_navi-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2.5em;
+  opacity: 0.3
+}
+
+footer .wrapper {
+  max-width: -webkit-calc(800px - (30px*2));
+  max-width: calc(800px - (30px*2));
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 30px;
+  padding-left: 30px
+}
+
+@media screen and (max-width:800px) {
+  footer .wrapper {
+    max-width: -webkit-calc(800px - (30px));
+    max-width: calc(800px - (30px));
+    padding-right: 15px;
+    padding-left: 15px
+  }
+}
+
+footer .wrapper:after,
+.footer-col-wrapper:after {
+  content: "";
+  display: table;
+  clear: both
+}
+
+.svg-icon {
+  width: 26px;
+  height: 16px;
+  display: inline-block;
+  fill: #828282;
+  padding-right: 5px;
+  vertical-align: text-top
+}
+
+.social-media-list li+li {
+  padding-top: 5px
+}
+
+.site-footer {
+  border-top: 1px solid #e8e8e8;
+  padding: 30px 0
+}
+
+.footer-heading {
+  font-size: 18px;
+  margin-bottom: 15px
+}
+
+.contact-list,
+.social-media-list {
+  list-style: none;
+  margin-left: 0;
+  width: 155px;
+}
+
+.footer-col-wrapper {
+  font-size: 15px;
+  color: #828282;
+  margin-left: -15px
+}
+
+.footer-col {
+  float: left;
+  margin-bottom: 15px;
+  padding-left: 15px
+}
+
+.footer-col-1 {
+  width: 30%;
+}
+
+.footer-col-2 {
+  width: 25%;
+}
+
+.footer-col-3 {
+  width: 45%;
+}
+
+@media screen and (max-width:800px) {
+
+  .footer-col-1,
+  .footer-col-2 {
+    width: -webkit-calc(50% - (30px/2));
+    width: calc(50% - (30px/2))
+  }
+
+  .footer-col-3 {
+    width: -webkit-calc(100% - (30px/2));
+    width: calc(100% - (30px/2))
+  }
+}
+
+@media screen and (max-width:600px) {
+  .footer-col {
+    float: none;
+    width: -webkit-calc(100% - (30px/2));
+    width: calc(100% - (30px/2))
+  }
+}
+</style>
+
+```{r setup, include=F, warning=F, message=F}
+knitr::opts_chunk$set(echo = T, message=F, warning=F)
+```
+
 
 ## Introduction
 The Perceptron algorithm is possibly the simplest of binary classification
@@ -18,7 +176,7 @@ This article is meant to serve as a high-level overview of the mathematics
 behind the algorithm, as well as an example of how one might go
 about programming their own Perceptron algorithm. Although, the code examples
 are written in the R language, I have similar functions in Python that you
-can find [here](https://github.com/bentontripp/perceptron-decepticon/blob/3a1e134e6747f5197c5edbc314c780ffb2d01539/notebooks/perceptron.ipynb).
+can find [here](https://github.com/benton-tripp/perceptron-decepticon/blob/3ada285f56ed09a26e77ef74e2800bac16fd94f1/notebooks/perceptron.ipynb).
 
 ### R Packages
 Before we begin, we can go ahead and import the required R packages. If they are
@@ -419,7 +577,7 @@ ggplot(data=DT, aes(x=x, y=y)) +
 
 We've done it! Feel free to try all of the code yourself. Below is a full R 
 script with all of the steps in the algorithm defined as functions, and if
-haven't already feel free to check out the same code written in Python [here](https://github.com/bentontripp/perceptron-decepticon/blob/3a1e134e6747f5197c5edbc314c780ffb2d01539/notebooks/perceptron.ipynb).
+haven't already feel free to check out the same code written in Python [here](https://github.com/benton-tripp/perceptron-decepticon/blob/3ada285f56ed09a26e77ef74e2800bac16fd94f1/notebooks/perceptron.ipynb).
 
 ```{r}
 #' Predict class of data by taking the sign of the dot product of x & w
@@ -481,15 +639,6 @@ perceptron <- function(data, verbose=F) {
 }
 
 ```
-
---------------------------------------------------------------------------------
-In future articles, I intend to share about multi-layer and kernel perceptrons,
-so stay tuned! 
-
-Also feel free to check out [some of my more recent work](https://medium.com/@bentontripp/calculus-with-python-part-1-3ce54973d6dc), a 5-part
-series (currently still in progress) on solving Calculus problems using Python!
-Finally, if you are not already subscribed to Medium and want to read unlimited
-articles, check out this [link](https://medium.com/@bentontripp/membership).
 
 ## References
 https://en.wikipedia.org/wiki/Perceptron <br>
